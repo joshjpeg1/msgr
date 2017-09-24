@@ -1,7 +1,7 @@
 # Msgr
 
-## ['https://github.com/joshjpeg1/msgr'](GitHub Repo)
-## ['http://msgr.jpegdev.win/'](Deployed Application)
+## [`GitHub Repo`](https://github.com/joshjpeg1/msgr)
+## [`Deployed App`](http://msgr.jpegdev.win/)
 
 To start your Phoenix server:
 
