@@ -18,6 +18,7 @@ defmodule MsgrWeb.Router do
 
     get "/", PageController, :index
     resources "/users", UserController
+    resources "/follows", FollowController
     resources "/messages", MessageController
   end
 

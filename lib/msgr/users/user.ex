@@ -3,9 +3,6 @@ defmodule Msgr.Users.User do
   import Ecto.Changeset
   alias Msgr.Users.User
 
-  @primary_key {:id, :binary_id, autogenerate: true}
-  @derive {Phoenix.Param, key: :id}
-
   schema "users" do
     field :bio, :string
     field :email, :string

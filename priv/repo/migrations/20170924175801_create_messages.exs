@@ -2,10 +2,9 @@ defmodule Msgr.Repo.Migrations.CreateMessages do
   use Ecto.Migration
 
   def change do
-    create table(:messages, primary_key: false) do
-			add :id, :uuid, primary_key: true
-      add :content, :text
-      add :user_id, references(:users, on_delete: :nothing, type: :uuid)
+    create table(:messages) do
+      add :content, :text, null: false
+      add :user_id, references(:users, on_delete: :delete_all), null: false
 
       timestamps()
     end

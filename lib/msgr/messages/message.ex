@@ -3,12 +3,9 @@ defmodule Msgr.Messages.Message do
   import Ecto.Changeset
   alias Msgr.Messages.Message
 
-  @primary_key {:id, :binary_id, autogenerate: true}
-  @derive {Phoenix.Param, key: :id}
-
   schema "messages" do
     field :content, :string
-    field :user_id, :id
+    belongs_to :user, Msgr.Users.User
 
     timestamps()
   end
@@ -16,7 +13,7 @@ defmodule Msgr.Messages.Message do
   @doc false
   def changeset(%Message{} = message, attrs) do
     message
-    |> cast(attrs, [:content])
-    |> validate_required([:content])
+    |> cast(attrs, [:content, :user_id])
+    |> validate_required([:content, :user_id])
   end
 end

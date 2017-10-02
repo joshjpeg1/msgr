@@ -2,6 +2,6 @@ defmodule MsgrWeb.PageController do
   use MsgrWeb, :controller
 
   def index(conn, _params) do
-    render conn, "index.html"
+    render conn, to: message_path(conn, :index)
   end
 end
