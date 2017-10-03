@@ -1,35 +1,38 @@
-<%= form_for @changeset, @action, fn f -> %>
+<link rel="stylesheet" href="css/user-new.css" />
+
+<div class="form-container">
+  <%= form_for @changeset, @action, fn f -> %>
   <%= if @changeset.action do %>
-    <div class="alert alert-danger">
-      <p>Oops, something went wrong! Please check the errors below.</p>
-    </div>
+  <div class="alert alert-danger">
+    <p>Oops, something went wrong! Please check the errors below.</p>
+  </div>
   <% end %>
-
-  <div class="form-group">
-    <%= label f, :full_name, class: "control-label" %>
-    <%= text_input f, :full_name, class: "form-control" %>
-    <%= error_tag f, :full_name %>
-  </div>
-
-  <div class="form-group">
-    <%= label f, :email, class: "control-label" %>
-    <%= text_input f, :email, class: "form-control" %>
-    <%= error_tag f, :email %>
-  </div>
-
-  <div class="form-group">
-    <%= label f, :username, class: "control-label" %>
-    <%= text_input f, :username, class: "form-control" %>
-    <%= error_tag f, :username %>
-  </div>
-
-  <div class="form-group">
-    <%= label f, :bio, class: "control-label" %>
-    <%= textarea f, :bio, class: "form-control" %>
-    <%= error_tag f, :bio %>
-  </div>
-
-  <div class="form-group">
-    <%= submit "Submit", class: "btn btn-primary" %>
-  </div>
-<% end %>
+    <div class="form-wrapper">
+      <div class="user-view-top-img"></div>
+      <div class="user-view">
+        <div class="user-picture">
+          <label for="user-icon" id="user-icon-label"></label>
+          <input type="file" id="user-icon" accept=".jpg, .jpeg, .png">
+        </div>
+        <div class="user-info">
+          <%= text_input f, :full_name, class: "full-name", placeholder: "Full name" %>
+          <div class="input-group" id="username-input-group">
+            <%= text_input f, :username, class: "username", placeholder: "username" %>
+          </div>
+          <%= textarea f, :bio, class: "bio", placeholder: "Tell us about yourself!" %>
+        </div>
+        <button type="button" tabindex="-1" class="btn btn-msgr my-0">Follow</button>
+        <div class="form-group">
+          <label for="email">Email address</label>
+          <%= email_input f, :email, class: "form-control", id: "email", placeholder: "Enter email" %>
+          <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+        </div>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" class="form-control" id="password" placeholder="Password">
+        </div>
+      </div>
+    </div>
+    <%= submit "Continue", id: "continue", class: "btn btn-lg btn-outline-primary" %>
+  <% end %>
+</div>

@@ -1,0 +1,169 @@
+body {
+  background: #fff;
+}
+
+#main {
+  padding: 1rem 2rem;
+}
+
+.header {
+  margin-top: 1rem;
+  margin-bottom: 4rem;
+}
+
+.header .brand {
+  font-size: 1.5rem;
+  color: #000;
+  font-weight: 800;
+}
+
+.header .brand img {
+  height: 1.5rem;
+}
+
+.welcome {
+  margin-bottom: 3rem;
+}
+
+.welcome h1 {
+  display: inline-block;
+  font-weight: 800;
+  position: relative;
+}
+
+.welcome h4 {
+  color: #444;
+}
+
+.form-container {
+  margin: 0 auto;
+  padding-left: 2rem;
+  padding-right: 2rem;
+}
+
+.form-wrapper {
+  box-shadow: 0 0.25rem 1rem -0.25rem rgba(0, 0, 0, 0.2);
+  margin-bottom: 3rem;
+}
+
+.user-view-top-img {
+  height: 9rem;
+  background: #F8CBC1;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+}
+
+.user-view {
+  background: #fff;
+  padding: 0.75rem 2rem 1rem 1.5rem;
+  position: relative;
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
+  margin-bottom: 1.5rem;
+}
+
+.user-view #user-icon-label {
+  position: absolute;
+  height: 8rem;
+  width: 8rem;
+  border-radius: 5px;
+  background-color: #EDF3F5;
+  top: -2rem;
+  box-shadow: 0 0 0 5px #fff;
+  cursor: pointer;
+}
+
+.user-view #user-icon-label::after {
+  content: '';
+  position: absolute;
+  width: 4rem;
+  height: 4rem;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-image: url("/img/camera.png");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.user-view #user-icon {
+  visibility: hidden;
+  position: absolute;
+  height: 8rem;
+  width: 8rem;
+  border-radius: 5px;
+  top: -2rem;
+}
+
+.user-view .user-info {
+  margin-left: 9.5rem;
+  width: calc(100% - 10rem);
+  min-height: 8rem;
+}
+
+.user-view .user-info input, .user-view .user-info textarea {
+  width: 100%;
+  border: none;
+}
+
+.user-view .user-info input:focus, .user-view .user-info textarea:focus {
+  outline: none;
+}
+
+.user-view .user-info .full-name {
+  display: block;
+  font-size: 2.5rem;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.user-view .user-info #username-input-group {
+  width: 100%;
+  font-size: 1.5rem;
+  color: #888;
+}
+
+.user-view .user-info #username-input-group::before {
+  content: '@';
+}
+
+.user-view .user-info .username {
+  font-size: 1.5rem;
+  color: #888;
+  margin-bottom: 0.75rem;
+}
+
+.user-view .user-info .bio {
+  resize: none;
+  font-size: 1.2rem;
+}
+
+.user-view .btn-msgr {
+  background: #FF4646;
+  color: #fff;
+  font-weight: 500;
+  border-radius: 5px;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  margin-right: 1rem;
+  position: absolute;
+  width: 8rem;
+  top: 6.75rem;
+}
+
+@media (max-width: 576px) {
+  .form-container {
+    padding-left: 0;
+    padding-right: 0;
+  }
+  .user-view-top-img {
+    border-radius: 0;
+  }
+  .user-view {
+    border-radius: 0;
+  }
+  #continue {
+    margin-left: 2rem;
+  }
+}

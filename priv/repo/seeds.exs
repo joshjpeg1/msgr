@@ -12,9 +12,7 @@
 
 alias Msgr.Repo
 alias Msgr.Users.User
+alias Msgr.Users.Follow
+alias Msgr.Messages.Message
 
-Repo.delete_all(User)
-
-Repo.insert!(%User{full_name: "Josh Pensky", email: "joshpensky@example.com", username: "josh_jpeg", bio: "I draw things."})
-Repo.insert!(%User{full_name: "twenty griffinteen", email: "griffin@mcelroyshows.com", username: "griffinmcelroy", bio: "Polygon Video Producer, MBMBaM Co-Brother, Adventure Zone DM, and Diesel Jeans"})
-Repo.insert!(%User{full_name: "Scott Pilgrim", email: "scott@amazon.ca", username: "WallacesB", bio: "Bread makes you FAT?!"})
+Repo.insert!(%Follow{follower_id: 8, subject_id: 9})

@@ -5,7 +5,11 @@ defmodule MsgrWeb.MessageController do
   alias Msgr.Messages.Message
 
   def index(conn, _params) do
-    messages = Messages.list_messages()
+    if user = get_session(conn, :user_id) do
+      messages = Messages.get_user_feed(user)
+    else
+      messages = Messages.list_messages
+    end
     render(conn, "index.html", messages: messages)
   end
 
@@ -19,7 +23,7 @@ defmodule MsgrWeb.MessageController do
       {:ok, message} ->
         conn
         |> put_flash(:info, "Message created successfully.")
-        |> redirect(to: message_path(conn, :show, message))
+        |> redirect(to: message_path(conn, :index))
       {:error, %Ecto.Changeset{} = changeset} ->
         render(conn, "new.html", changeset: changeset)
     end

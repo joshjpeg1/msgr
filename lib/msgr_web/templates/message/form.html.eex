@@ -1,17 +1,16 @@
-<%= form_for @changeset, @action, fn f -> %>
+<link rel="stylesheet" href="css/message-index.css" />
+
+<div id="msgBox" class="modal-dialog" role="document">
+<%= form_for @changeset, @action, [class: "new-post"], fn f -> %>
   <%= if @changeset.action do %>
     <div class="alert alert-danger">
       <p>Oops, something went wrong! Please check the errors below.</p>
     </div>
   <% end %>
-
-  <div class="form-group">
-    <%= label f, :content, class: "control-label" %>
-    <%= textarea f, :content, class: "form-control" %>
-    <%= error_tag f, :content %>
-  </div>
-
-  <div class="form-group">
-    <%= submit "Submit", class: "btn btn-primary" %>
-  </div>
+    <%= hidden_input f, :user_id, value: @current_user.id %>
+    <div class="user-icon"></div>
+    <!--<textarea class="form-control" name="content" placeholder="Write a message..." aria-label="Write a message..."></textarea>-->
+    <%= textarea f, :content, class: "form-control", placeholder: "Write a message..." %>
+    <%= submit "Post", class: "btn btn-msgr my-2 my-sm-0" %>
 <% end %>
+</div>

@@ -7,27 +7,66 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Hello Msgr!</title>
+    <title>Msgr</title>
     <link rel="stylesheet" href="<%= static_path(@conn, "/css/app.css") %>">
   </head>
 
   <body>
-    <div class="container">
-      <header class="header">
-        <nav role="navigation">
-          <ul class="nav nav-pills pull-right">
-            <li><a href="http://www.phoenixframework.org/docs">Get Started</a></li>
-          </ul>
+    <%= if @current_user do %>
+    	<div id="nav-fix" class="fixed-top">
+        	<nav class="navbar navbar-light bg-white col-xl-8 ">
+            	<%= link to: message_path(@conn, :index), class: "navbar-brand" do %>
+                	<img src="<%= static_path(@conn, "/images/logo.png") %>" width="25" height="25" class="d-inline-block align-center" alt="logo">
+                	Msgr
+            	<% end %>
+            	<ul class="navbar-nav mr-auto">
+                	<li class="nav-item active">
+                    	<a class="nav-link" href="#">Home</a>
+                	</li>
+                	<li class="nav-item">
+                    	<a class="nav-link" href="#">Notifications</a>
+                	</li>
+            	</ul>
+            	<div id="nav-right" class="form-inline">
+                	<form id="search" class="form-inline my-2 my-lg-0">
+                    	<input type="text" class="form-control" name="search" placeholder="Search Msgr" aria-label="Search Msgr">
+                    	<button id="search-icon" type="submit"><img src="<%= static_path(@conn, "/images/search.png") %>" width="20" height="20" class="d-inline-block align-center" alt="search"></button>
+                	</form>
+                	<div class="dropdown">
+                    	<button id="nav-user" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></button>
+                    	<div class="dropdown-menu dropdown-menu-left">
+                        	<h1 class="dropdown-header dropdown-header-main"><%= @current_user.full_name %></h1>
+                        	<h6 class="dropdown-header dropdown-header-sub"><%= @current_user.username %></h6>
+				<%= link "Profile", to: user_path(@conn, :show, @current_user),  class: "dropdown-item" %>
+                        	<div class="dropdown-divider"></div>
+                          <%= link "Log out", to: session_path(@conn, :logout), method: :delete, class: "dropdown-item" %>
+                    	</div>
+                	</div>
+                	 <%= link "Post", to: message_path(@conn, :new), id: "post", class: "btn my-2 my-sm-0" %>
+            	</div>
+        	</nav>
+    	</div>
+    <% else %>
+    <div id="nav-fix" class="fixed-top">
+        <nav class="navbar navbar-light bg-white col-xl-8 ">
+            <a class="navbar-brand" href="#">
+                <img src="<%= static_path(@conn, "/images/logo.png") %>" width="25" height="25" class="d-inline-block align-center" alt="logo">
+                Msgr
+            </a>
+            <%= form_for @conn, session_path(@conn, :login), [as: "user", class: "form-inline"], fn f -> %>
+                <input type="text" class="form-control" name="username_email" placeholder="Username or email" aria-label="Enter username or email">
+                <input type="submit" class="btn my-2 my-sm-0 btn-msgr" value="Log in">
+            <% end %>
         </nav>
-        <span class="logo"></span>
-      </header>
-			
-			<%= if get_flash(@conn, :info) do %>
-     	  <p class="alert alert-info" role="alert"><%= get_flash(@conn, :info) %></p>
-      <% end %>
-			<%= if get_flash(@conn, :error) do %>
-				<p class="alert alert-danger" role="alert"><%= get_flash(@conn, :error) %></p>
-			<% end %>
+    </div>
+    <% end %>
+    <div id="main" class="container col-xl-8 col-lg-10 col-sm-12">
+        <%= if get_flash(@conn, :info) do %>
+            <p class="alert alert-info" role="alert"><%= get_flash(@conn, :info) %></p>
+        <% end %>
+	<%= if get_flash(@conn, :error) do %>
+	    <p class="alert alert-danger" role="alert"><%= get_flash(@conn, :error) %></p>
+	<% end %>
 
       <main role="main">
         <%= render @view_module, @view_template, assigns %>

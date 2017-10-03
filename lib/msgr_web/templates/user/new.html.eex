@@ -1,5 +1,7 @@
-<h2>New User</h2>
+<div class="welcome">
+  <h1>Welcome!</h1>
+  <h4 >Please fill out the card below to create your account.</h4>
+</div>
+
 
 <%= render "form.html", Map.put(assigns, :action, user_path(@conn, :create)) %>
-
-<span><%= link "Back", to: user_path(@conn, :index) %></span>

@@ -37,6 +37,15 @@ defmodule Msgr.Users do
   """
   def get_user!(id), do: Repo.get!(User, id)
 
+  # Credit to Nathaniel Tuck for code, http://www.ccs.neu.edu/home/ntuck/courses/2017/09/cs4550/notes/06-finish-cart/notes.html
+  def get_user_by_email(email) do
+    Repo.get_by(User, email: email)
+  end
+
+  def get_user_by_username(username) do
+    Repo.get_by(User, username: username)
+  end
+
   @doc """
   Creates a user.
 
@@ -117,6 +126,16 @@ defmodule Msgr.Users do
     Repo.all(Follow)
   end
 
+  def list_followers(user_id) do
+    query = from f in Follow, where: f.subject_id == ^user_id
+    Repo.all(from u in User, join: f in subquery(query), on: f.follower_id == u.id)
+  end
+
+  def list_following(user_id) do
+    query = from f in Follow, where: f.follower_id == ^user_id
+    Repo.all(from u in User, join: f in subquery(query), on: f.subject_id == u.id)
+  end
+
   @doc """
   Gets a single follow.
 
@@ -132,6 +151,10 @@ defmodule Msgr.Users do
 
   """
   def get_follow!(id), do: Repo.get!(Follow, id)
+
+  def get_follow_by_users(follower_id, subject_id) do
+    Repo.get_by(Follow, follower_id: follower_id, subject_id: subject_id)
+  end
 
   @doc """
   Creates a follow.

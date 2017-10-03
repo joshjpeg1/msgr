@@ -7,6 +7,7 @@ defmodule Msgr.Messages do
   alias Msgr.Repo
 
   alias Msgr.Messages.Message
+  alias Msgr.Users.Follow
 
   @doc """
   Returns the list of messages.
@@ -18,7 +19,7 @@ defmodule Msgr.Messages do
 
   """
   def list_messages do
-    Repo.all(Message)
+    Repo.all(from m in Message, order_by: [desc: m.inserted_at])
   end
 
   @doc """
@@ -36,6 +37,27 @@ defmodule Msgr.Messages do
 
   """
   def get_message!(id), do: Repo.get!(Message, id)
+
+  def list_messages_by_userid(user_id) do
+    Repo.all(from m in Message, where: m.user_id == ^user_id, order_by: [desc: m.inserted_at])
+  end
+
+  def get_user_feed(user_id) do
+    query = from f in Follow, where: f.follower_id == ^user_id
+    if length(Repo.all(query)) == 0 do
+      Msgr.Messages.list_messages_by_userid(user_id)
+    else
+      Repo.all(from m in Message, join: f in subquery(query),
+          on: f.subject_id == m.user_id or m.user_id == ^user_id,
+          order_by: [desc: m.inserted_at])
+    end
+  end
+
+  def get_message_time(id) do
+    #datetime = get_message!(id).inserted_at
+    #datetime.year
+    "Just now"
+  end
 
   @doc """
   Creates a message.

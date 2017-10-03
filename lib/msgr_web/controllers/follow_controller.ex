@@ -17,9 +17,9 @@ defmodule MsgrWeb.FollowController do
   def create(conn, %{"follow" => follow_params}) do
     case Users.create_follow(follow_params) do
       {:ok, follow} ->
+        user = follow.subject_id
         conn
-        |> put_flash(:info, "Follow created successfully.")
-        |> redirect(to: follow_path(conn, :show, follow))
+        |> redirect(to: user_path(conn, :show, user))
       {:error, %Ecto.Changeset{} = changeset} ->
         render(conn, "new.html", changeset: changeset)
     end
@@ -51,10 +51,14 @@ defmodule MsgrWeb.FollowController do
 
   def delete(conn, %{"id" => id}) do
     follow = Users.get_follow!(id)
+    user = follow.subject_id
     {:ok, _follow} = Users.delete_follow(follow)
 
     conn
-    |> put_flash(:info, "Follow deleted successfully.")
-    |> redirect(to: follow_path(conn, :index))
+    |> redirect(to: user_path(conn, :show, user))
+  end
+
+  def delete(conn, %{"follower_id" => follower_id, "subject_id" => subject_id}) do
+    Users.Follow.delete(Users.get_follow_by_users(follower_id, subject_id).id)
   end
 end

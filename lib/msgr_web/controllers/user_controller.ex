@@ -19,6 +19,7 @@ defmodule MsgrWeb.UserController do
       {:ok, user} ->
         conn
         |> put_flash(:info, "User created successfully.")
+        |> put_session(:user_id, user.id)
         |> redirect(to: user_path(conn, :show, user))
       {:error, %Ecto.Changeset{} = changeset} ->
         render(conn, "new.html", changeset: changeset)
@@ -27,7 +28,12 @@ defmodule MsgrWeb.UserController do
 
   def show(conn, %{"id" => id}) do
     user = Users.get_user!(id)
-    render(conn, "show.html", user: user)
+    follow = %Msgr.Users.Follow {
+			follower_id: id,
+			subject_id: id,
+		}
+		follow = Users.change_follow(follow)
+    render(conn, "show.html", user: user, follow: follow)
   end
 
   def edit(conn, %{"id" => id}) do
