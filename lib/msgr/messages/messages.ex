@@ -4,6 +4,7 @@ defmodule Msgr.Messages do
   """
 
   import Ecto.Query, warn: false
+  import Msgr.Dates
   alias Msgr.Repo
 
   alias Msgr.Messages.Message
@@ -54,10 +55,11 @@ defmodule Msgr.Messages do
   end
 
   def get_message_time(id) do
-    #datetime = get_message!(id).inserted_at
-    #datetime.year
-    "Just now"
-  end
+    datetime = get_message!(id).inserted_at
+    curr_day = Date.utc_today()
+    curr_time = Time.utc_now()
+    get_msg_time(datetime, curr_day, curr_time)
+	end
 
   @doc """
   Creates a message.
