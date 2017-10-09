@@ -1,26 +1,27 @@
 defmodule Msgr.Dates do
-	def get_msg_time(msg, curr_day, curr_time) do
-		curr_utc = calc_utc(curr_time.hour, curr_time.minute, curr_time.second)
+	
+	def get_msg_time(msg, current) do
+		curr_utc = calc_utc(current.hour, current.minute, current.second)
 		msg_utc =  calc_utc(msg.hour, msg.minute, msg.second)
 		sd_time_dif = curr_utc - msg_utc  # same day time difference
 		nd_time_dif = (86400 - msg_utc) + curr_utc  # next day time difference
 		
-		same_month = (curr_day.month == msg.month) and ((curr_day.day < msg.day) or (curr_day.day == msg.day and (sd_time_dif < 0)))
+		same_month = (current.month == msg.month) and ((current.day < msg.day) or (current.day == msg.day and (sd_time_dif < 0)))
 
 		# less than a year
-		if (curr_day.year == msg.year) or ((curr_day.year - msg.year == 1) and (same_month or (curr_day.day < msg.day))) do
-			check_less_than_day(msg, curr_day, curr_time, sd_time_dif, nd_time_dif)
+		if (current.year == msg.year) or ((current.year - msg.year == 1) and (same_month or (current.day < msg.day))) do
+			check_less_than_day(msg, current, sd_time_dif, nd_time_dif)
 		else
 			date_over_year(msg)
 		end
 	end
 
-	def check_less_than_day(msg, curr_day, curr_time, sd_time_dif, nd_time_dif) do
-		next_day = ((curr_day.month == msg.month) and (curr_day.day - msg.day == 1))
-    next_day = next_day or ((curr_day.month - msg.month == 1) and (curr_day.day - msg.day == 1))
-    next_day = next_day or (curr_day.month == 1 and msg.month == 12 and curr_day.day == 1 and msg.day == Date.days_in_month(msg))
+	def check_less_than_day(msg, current, sd_time_dif, nd_time_dif) do
+		next_day = ((current.month == msg.month) and (current.day - msg.day == 1))
+    next_day = next_day or ((current.month - msg.month == 1) and (current.day - msg.day == 1))
+    next_day = next_day or (current.month == 1 and msg.month == 12 and current.day == 1 and msg.day == Date.days_in_month(msg))
 
-    same_day = (curr_day.month == msg.month) and (curr_day.day == msg.day)
+    same_day = (current.month == msg.month) and (current.day == msg.day)
 
 		if ((sd_time_dif > 0) and same_day) or ((sd_time_dif < 0) and next_day) do
 			check_less_than_hour(same_day, next_day, sd_time_dif, nd_time_dif)

@@ -56,9 +56,7 @@ defmodule Msgr.Messages do
 
   def get_message_time(id) do
     datetime = get_message!(id).inserted_at
-    curr_day = Date.utc_today()
-    curr_time = Time.utc_now()
-    get_msg_time(datetime, curr_day, curr_time)
+    get_msg_time(datetime, NaiveDateTime.utc_now())
 	end
 
   @doc """
