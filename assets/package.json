@@ -7,6 +7,7 @@
   },
   "dependencies": {
     "bootstrap": "^4.0.0-beta",
+    "handlebars": "^4.0.10",
     "jquery": "^3.2.1",
     "phoenix": "file:../deps/phoenix",
     "phoenix_html": "file:../deps/phoenix_html",

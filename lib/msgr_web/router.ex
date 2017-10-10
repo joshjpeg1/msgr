@@ -13,6 +13,8 @@ defmodule MsgrWeb.Router do
 
   pipeline :api do
     plug :accepts, ["json"]
+    plug :fetch_session
+    plug :fetch_user
   end
 
   scope "/", MsgrWeb do
@@ -27,7 +29,10 @@ defmodule MsgrWeb.Router do
   end
 
   # Other scopes may use custom stacks.
-  # scope "/api", MsgrWeb do
-  #   pipe_through :api
-  # end
+  scope "/api", MsgrWeb do
+    pipe_through :api
+
+    resources "/likes", LikeController, except: [:new, :edit]
+    delete "/likes", LikeController, :delete
+  end
 end
