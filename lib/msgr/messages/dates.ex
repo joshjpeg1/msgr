@@ -8,7 +8,6 @@ defmodule Msgr.Dates do
 		
 		same_month = (current.month == msg.month) and ((current.day < msg.day) or (current.day == msg.day and (sd_time_dif < 0)))
 
-		# less than a year
 		if (current.year == msg.year) or ((current.year - msg.year == 1) and (same_month or (current.day < msg.day))) do
 			check_less_than_day(msg, current, sd_time_dif, nd_time_dif)
 		else
@@ -23,7 +22,7 @@ defmodule Msgr.Dates do
 
     same_day = (current.month == msg.month) and (current.day == msg.day)
 
-		if ((sd_time_dif > 0) and same_day) or ((sd_time_dif < 0) and next_day) do
+		if ((sd_time_dif >= 0) and same_day) or ((sd_time_dif < 0) and next_day) do
 			check_less_than_hour(same_day, next_day, sd_time_dif, nd_time_dif)
 		else
 			date_over_day(msg)

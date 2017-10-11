@@ -220,12 +220,17 @@ body {
   margin: 0;
 }
 
+.post-list-item .main-info a {
+  text-decoration: none;
+}
+
 .post-list-item .main-info .user-info p {
   display: inline-block;
 }
 
 .post-list-item .main-info .user-info .full-name {
   font-weight: 600;
+  color: #000;
 }
 
 .post-list-item .main-info .user-info .username {
@@ -242,6 +247,7 @@ body {
 
 .post-list-item .main-info .content {
   color: #222;
+  text-decoration: none;
 }
 
 .post-list-item .main-info .content a {
