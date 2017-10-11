@@ -22,6 +22,7 @@ import "phoenix_html";
 
 let handlebars = require("handlebars");
 
+// Thank you to Nathaniel Tuck for supplying the base code: http://www.ccs.neu.edu/home/ntuck/courses/2017/09/cs4550/notes/07-ajax-cart/notes.html
 $(function() {
 	if (!$("#post-likes").length > 0) {
 		// Wrong page.
