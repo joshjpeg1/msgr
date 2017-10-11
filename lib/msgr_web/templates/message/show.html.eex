@@ -14,13 +14,15 @@
       <p class="time"><%= Msgr.Messages.get_message_time(@message.id) %></p>
 			<%= if @current_user do %>
 			<div class="msg-view-divider"></div>
-     	<div class="post-stats">
-        <div class="post-stats-like">
-        	<div class="like-btn icon <%= if Msgr.Messages.did_user_like(@current_user.id, @message.id), do: 'icon--selected' %>"
-               data-user-id="<%= @current_user.id %>" data-message-id="<%= @message.id %>"></div>
-          <p class="val"><%= Msgr.Messages.get_like_count(@message.id) %></p>
-        </div>
-      </div>
+			<div id="post-likes" data-path="<%= like_path(@conn, :index) %>">
+     		<div class="post-stats">
+        	<div class="post-stats-like">
+        		<div class="like-btn icon <%= if Msgr.Messages.did_user_like(@current_user.id, @message.id), do: 'icon--selected' %>"
+            	   data-user-id="<%= @current_user.id %>" data-message-id="<%= @message.id %>"></div>
+          	<p class="val"><%= Msgr.Messages.get_like_count(@message.id) %></p>
+        	</div>
+      	</div>
+			</div>
       <% end %>
 		</div>
   </div>

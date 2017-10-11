@@ -23,14 +23,10 @@ import "phoenix_html";
 let handlebars = require("handlebars");
 
 $(function() {
-	if (!$("#likes-template").length > 0) {
+	if (!$("#post-likes").length > 0) {
 		// Wrong page.
 		return;
 	}
-
-	let tt = $($("#likes-template")[0]);
-	let code = tt.html();
-	let tmpl = handlebars.compile(code);
 
 	let dd= $($("#post-likes")[0]);
 	let path = dd.data('path');
@@ -68,8 +64,6 @@ $(function() {
 		$(button)[0].nextElementSibling.innerHTML = parseInt($(button)[0].nextElementSibling.innerHTML) + (liked ? -1 : 1);
 	}
 
-	dd.html(tmpl({}));
-
 	$(".like-btn").each(function() {
 		this.addEventListener("click", function() {
 			toggle_like($(this));
@@ -80,18 +74,14 @@ $(function() {
 
 
 $(function() {
-	if (!$("#follows-template").length > 0) {
+	if (!$("#user-follows").length > 0) {
 		// Wrong page
 		return;
 	}
 
 	const textFollow = "Follow";
 	const textFollowing = "Following";
-
-	let tt = $($("#follows-template")[0]);
-	let code = tt.html();
-	let tmpl = handlebars.compile(code);
-
+	
 	let dd = $($("#user-follows")[0]);
 	let path = dd.data('path');
 
@@ -99,8 +89,6 @@ $(function() {
 		let f_id = button.data('follower-id');
 		let s_id = button.data('subject-id');
 		let following = button.data('following');
-
-		console.log(following);
 
 		let data = {follow: {follower_id: f_id, subject_id: s_id}};
 
@@ -117,16 +105,9 @@ $(function() {
 	}
 
 	function update_button(button, following) {
-		if (following) {
-			$(button)[0].innerHTML = "Follow";
-		} else {
-			$(button)[0].innerHTML = "Following";
-		}
+		$(button)[0].innerHTML = following ? textFollow : textFollowing;
+		button.data('following', !following);
 	}
-
-	dd.html(tmpl({}));
-	console.log(dd);
-	console.log(tmpl({}));
 	
 	$(".follow-btn").each(function() {
 		this.innerHTML = $(this).data('following') ? textFollowing : textFollow;

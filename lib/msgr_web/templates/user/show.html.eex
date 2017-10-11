@@ -11,11 +11,10 @@
     <%= if @current_user.id == @user.id do %>
 			<button class="btn btn-msgr my-0 disabled">You</button>
 		<% else %>
-			<div id="user-follows" data-path="<%= follow_path(@conn, :index) %>">&nbsp;</div>
-      <script id="follows-template" type="text/x-handlebars-template">
+			<div id="user-follows" data-path="<%= follow_path(@conn, :index) %>">
 				<button class="btn btn-msgr follow-btn my-0" data-follower-id="<%= @current_user.id %>" data-subject-id="<%= @user.id %>" 
 								data-following="<%= Msgr.Users.get_follow_by_users(@current_user.id, @user.id) != nil %>"></button>
-			</script>
+			</div>
 		<% end %>
 </div>
 <div class="row">
@@ -38,8 +37,7 @@
     </ul>
     <div id="feed" class="container col-md-9 col-sm-12">
         <ul class="post-list">
-					<div id="post-likes" data-path="<%= like_path(@conn, :create) %>">&nbsp;</div>
-        	<script id="likes-template" type="text/x-handlebars-template">
+					<div id="post-likes" data-path="<%= like_path(@conn, :create) %>">
         	<%= for message <- Msgr.Messages.list_messages_by_userid(@user.id) do %>
         	<li class="post-list-item">
           	<div class="user-icon"></div>
@@ -62,7 +60,7 @@
           	<% end %>
         	</li>
         	<% end %>
-        	</script>
-        </ul>
+       		</div>
+				</ul>
     </div>
 </div>

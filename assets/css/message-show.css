@@ -425,6 +425,7 @@ body {
 
 .msg-view .post-stats {
   display: block;
+  padding-left: 0;
 }
 
 .btn-like {
