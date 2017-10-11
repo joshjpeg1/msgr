@@ -48,8 +48,9 @@ defmodule Msgr.Messages do
     if length(Repo.all(query)) == 0 do
       Msgr.Messages.list_messages_by_userid(user_id)
     else
+			query = from f in Follow, where: f.follower_id == ^user_id or f.subject_id == ^user_id
       Repo.all(from m in Message, join: f in subquery(query),
-          on: f.subject_id == m.user_id or m.user_id == ^user_id,
+          on: f.subject_id == m.user_id,
           order_by: [desc: m.inserted_at])
     end
   end

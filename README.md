@@ -29,6 +29,11 @@ To follow a user, click the follow button on their user page. To unfollow a user
 
 You cannot follow yourself.
 
+### Likes
+Likes can be viewed either when looking at a single message or multiple in a list.
+
+Any user can like another user's message. However, a user can like a message only once.
+
 ---
 
 To start your Phoenix server:

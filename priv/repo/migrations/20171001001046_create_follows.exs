@@ -8,8 +8,8 @@ defmodule Msgr.Repo.Migrations.CreateFollows do
 
       timestamps()
     end
-
-    create index(:follows, [:follower_id])
-    create index(:follows, [:subject_id])
+	
+		create index(:follows, [:follower_id])
+		create index(:follows, [:subject_id])
   end
 end
