@@ -1,10 +1,3 @@
-<!--<%= for u <- Msgr.Users.list_followers(@user.id) do %>
-<li>Name: @<%= u.username %>
-<% end %>-->
-
-<!--<%= for u <- Msgr.Users.list_following(@user.id) do %>
-<li>Name: @<%= u.username %>
-<% end %>-->
 <link rel="stylesheet" href="css/user-show.css" />
 
 <div class="head-img"></div>
@@ -16,19 +9,14 @@
         <p class="bio"><%= @user.bio %></p>
     </div>
     <%= if @current_user.id == @user.id do %>
-	<button class="btn btn-msgr my-0 disabled">You</button>
-	<% else %>
-		<%= if Enum.member?(Msgr.Users.list_following(@current_user.id), @user) do %>
-			<%= link "Following", to: follow_path(@conn, :delete, Msgr.Users.get_follow_by_users(@current_user.id, @user.id)),
-								  method: :delete, class: "btn btn-msgr my-0" %>
+			<button class="btn btn-msgr my-0 disabled">You</button>
 		<% else %>
-			<%= form_for @follow, follow_path(@conn, :create), fn f -> %>
-                <%= hidden_input f, :follower_id, value: @current_user.id %>
-                <%= hidden_input f, :subject_id, value: @user.id %>
-                <%= submit "Follow", class: "btn btn-msgr my-0" %>
-            <% end %>
+			<div id="user-follows" data-path="<%= follow_path(@conn, :index) %>">&nbsp;</div>
+      <script id="follows-template" type="text/x-handlebars-template">
+				<button class="btn btn-msgr follow-btn my-0" data-follower-id="<%= @current_user.id %>" data-subject-id="<%= @user.id %>" 
+								data-following="<%= Msgr.Users.get_follow_by_users(@current_user.id, @user.id) != nil %>"></button>
+			</script>
 		<% end %>
-	<% end %>
 </div>
 <div class="row">
     <ul id="stats" class="container col-3">
@@ -50,19 +38,31 @@
     </ul>
     <div id="feed" class="container col-md-9 col-sm-12">
         <ul class="post-list">
-            <%= for message <- Msgr.Messages.list_messages_by_userid(@user.id) do %>
-                <li class="post-list-item">
-                    <div class="user-icon"></div>
-                    <div class="main-info">
-                        <div class="user-info">
-                            <p class="full-name"><%= @user.full_name %></p>
-                            <p class="username"><%= @user.username %></p>
-                            <p class="time"><%= Msgr.Messages.get_message_time(message.id) %></p>
-                        </div>
-                        <p class="content"><%= message.content %></p>
-                    </div>
-                </li>
-            <% end %>
+					<div id="post-likes" data-path="<%= like_path(@conn, :create) %>">&nbsp;</div>
+        	<script id="likes-template" type="text/x-handlebars-template">
+        	<%= for message <- Msgr.Messages.list_messages_by_userid(@user.id) do %>
+        	<li class="post-list-item">
+          	<div class="user-icon"></div>
+          	<div class="main-info">
+            	<div class="user-info">
+              	<p class="full-name"><%= @user.full_name %></p>
+              	<p class="username"><%= @user.username %></p>
+              	<p class="time"><%= Msgr.Messages.get_message_time(message.id) %></p>
+            	</div>
+            	<%= link to: message_path(@conn, :show, message) do %><p class="content"><%= message.content %></p><% end %>
+         		</div>
+          	<%= if @current_user do %>
+          	<div class="post-stats">
+            	<div class="post-stats-like">
+              	<div class="like-btn icon <%= if Msgr.Messages.did_user_like(@current_user.id, message.id), do: 'icon--selected' %>"
+                	  data-user-id="<%= @current_user.id %>" data-message-id="<%= message.id %>"></div>
+              	<p class="val"><%= Msgr.Messages.get_like_count(message.id) %></p>
+            	</div>
+          	</div>
+          	<% end %>
+        	</li>
+        	<% end %>
+        	</script>
         </ul>
     </div>
 </div>

@@ -25,7 +25,7 @@
         <%= link "Post", to: message_path(@conn, :new), class: "btn btn-msgr my-2 my-sm-0" %>
       </div>
       <ul class="post-list">
-				<div id="post-likes" data-path="<%= like_path(@conn, :create) %>">&nbsp;</div>
+				<div id="post-likes" data-path="<%= like_path(@conn, :index) %>">&nbsp;</div>
 				<script id="likes-template" type="text/x-handlebars-template">
         <%= for message <- @messages do %>
         <% user = Msgr.Users.get_user!(message.user_id) %>

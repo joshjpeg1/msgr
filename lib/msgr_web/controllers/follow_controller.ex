@@ -6,12 +6,7 @@ defmodule MsgrWeb.FollowController do
 
   def index(conn, _params) do
     follows = Users.list_follows()
-    render(conn, "index.html", follows: follows)
-  end
-
-  def new(conn, _params) do
-    changeset = Users.change_follow(%Follow{})
-    render(conn, "new.html", changeset: changeset)
+    render(conn, "index.json", follows: follows)
   end
 
   def create(conn, %{"follow" => follow_params}) do
@@ -25,29 +20,15 @@ defmodule MsgrWeb.FollowController do
     end
   end
 
-  def show(conn, %{"id" => id}) do
-    follow = Users.get_follow!(id)
-    render(conn, "show.html", follow: follow)
-  end
-
-  def edit(conn, %{"id" => id}) do
-    follow = Users.get_follow!(id)
-    changeset = Users.change_follow(follow)
-    render(conn, "edit.html", follow: follow, changeset: changeset)
-  end
-
-  def update(conn, %{"id" => id, "follow" => follow_params}) do
-    follow = Users.get_follow!(id)
-
-    case Users.update_follow(follow, follow_params) do
-      {:ok, follow} ->
-        conn
-        |> put_flash(:info, "Follow updated successfully.")
-        |> redirect(to: follow_path(conn, :show, follow))
-      {:error, %Ecto.Changeset{} = changeset} ->
-        render(conn, "edit.html", follow: follow, changeset: changeset)
+	def delete(conn, %{"follow" => follow_params}) do
+    follow = Users.get_follow_by_users(follow_params["follower_id"], follow_params["subject_id"])
+    if follow do
+      with {:ok, %Follow{}} <- Users.delete_follow(follow) do
+        send_resp(conn, :no_content, "")
+      end
     end
   end
+
 
   def delete(conn, %{"id" => id}) do
     follow = Users.get_follow!(id)

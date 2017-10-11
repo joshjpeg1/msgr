@@ -18,9 +18,13 @@ defmodule MsgrWeb.LikeView do
 		}
 
 		if Ecto.assoc_loaded?(like.user) do
-			Map.put(data, :user_username, like.user.username)
-		else
-			data
+			data = Map.delete(data, :user_id)
+			data = Map.put(data, :user, %{id: like.user_id, username: like.user.username, full_name: like.user.full_name})
 		end
+		if Ecto.assoc_loaded?(like.message) do
+			data = Map.delete(data, :message_id)
+			data = Map.put(data, :message, %{id: like.message_id, user_id: like.message.user_id, content: like.message.content})
+		end
+		data
   end
 end

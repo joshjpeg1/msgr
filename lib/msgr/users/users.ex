@@ -124,6 +124,8 @@ defmodule Msgr.Users do
   """
   def list_follows do
     Repo.all(Follow)
+		|> Repo.preload(:follower)
+		|> Repo.preload(:subject)
   end
 
   def list_followers(user_id) do

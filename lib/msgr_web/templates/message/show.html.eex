@@ -1,18 +1,27 @@
 <link rel="stylesheet" href="css/message-show.css" />
-<link rel="stylesheet" href="css/message-index.css" />
 
 <div id="msgBox" class="modal-dialog" role="document">
 	<div class="msg-view-top"></div>
 		<div class="msg-view">
-		<%= link to: user_path(@conn, :show, Msgr.Users.get_user!(@message.user_id)) do %>
-        	<div class="user-info">
-            		<div class="user-icon"></div>
-			<p class="full-name"><%= Msgr.Users.get_user!(@message.user_id).full_name %></p>
-                	<p class="username"><%= Msgr.Users.get_user!(@message.user_id).username %></p>
+			<%= link to: user_path(@conn, :show, Msgr.Users.get_user!(@message.user_id)) do %>
+      <div class="user-info">
+        <div class="user-icon"></div>
+				<p class="full-name"><%= Msgr.Users.get_user!(@message.user_id).full_name %></p>
+      	<p class="username"><%= Msgr.Users.get_user!(@message.user_id).username %></p>
+			</div>
+			<% end %>
+      <p class="content"><%= @message.content %></p>
+      <p class="time"><%= Msgr.Messages.get_message_time(@message.id) %></p>
+			<%= if @current_user do %>
+			<div class="msg-view-divider"></div>
+     	<div class="post-stats">
+        <div class="post-stats-like">
+        	<div class="like-btn icon <%= if Msgr.Messages.did_user_like(@current_user.id, @message.id), do: 'icon--selected' %>"
+               data-user-id="<%= @current_user.id %>" data-message-id="<%= @message.id %>"></div>
+          <p class="val"><%= Msgr.Messages.get_like_count(@message.id) %></p>
+        </div>
+      </div>
+      <% end %>
 		</div>
-		<% end %>
-           	<p class="content"><%= @message.content %></p>
-            <p class="time"><%= Msgr.Messages.get_message_time(@message.id) %></p>
-        </div>  
-    </div>
+  </div>
 </div>

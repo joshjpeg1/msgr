@@ -137,14 +137,20 @@ defmodule Msgr.Messages do
   """
   def list_likes do
     Repo.all(Like)
+		|> Repo.preload(:user)
+		|> Repo.preload(:message)
   end
 
 	def list_likes_by_user(user_id) do
 		Repo.all(from l in Like, where: l.user_id == ^user_id)
+		|> Repo.preload(:user)
+		|> Repo.preload(:message)
 	end
 
 	def list_likes_by_message(message_id) do
 		Repo.all(from l in Like, where: l.message_id == ^message_id)
+		|> Repo.preload(:user)
+		|> Repo.preload(:message)
 	end
 
   @doc """

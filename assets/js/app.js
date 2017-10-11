@@ -77,3 +77,62 @@ $(function() {
 	});
 
 });
+
+
+$(function() {
+	if (!$("#follows-template").length > 0) {
+		// Wrong page
+		return;
+	}
+
+	const textFollow = "Follow";
+	const textFollowing = "Following";
+
+	let tt = $($("#follows-template")[0]);
+	let code = tt.html();
+	let tmpl = handlebars.compile(code);
+
+	let dd = $($("#user-follows")[0]);
+	let path = dd.data('path');
+
+	function toggle_follow(button) {
+		let f_id = button.data('follower-id');
+		let s_id = button.data('subject-id');
+		let following = button.data('following');
+
+		console.log(following);
+
+		let data = {follow: {follower_id: f_id, subject_id: s_id}};
+
+		let method = following ? "DELETE" : "POST";
+		
+		$.ajax({
+			url: path,
+			data: JSON.stringify(data),
+			contentType: "application/json",
+			dataType: "json",
+			method: method,
+			success: update_button(button, following),
+		});
+	}
+
+	function update_button(button, following) {
+		if (following) {
+			$(button)[0].innerHTML = "Follow";
+		} else {
+			$(button)[0].innerHTML = "Following";
+		}
+	}
+
+	dd.html(tmpl({}));
+	console.log(dd);
+	console.log(tmpl({}));
+	
+	$(".follow-btn").each(function() {
+		this.innerHTML = $(this).data('following') ? textFollowing : textFollow;
+		this.addEventListener("click", function() {
+			toggle_follow($(this));
+		});
+	});
+
+});
