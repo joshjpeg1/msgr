@@ -1,4 +1,4 @@
-export PORT=8000
+export MIX_ENV=prod
 
 echo "Deploy to [$DIR]"
 
@@ -10,4 +10,4 @@ mix release --env=prod
 
 scp _build/prod/rel/msgr/releases/0.0.1/msgr.tar.gz msgr@jpegdev.win:/home/msgr
 
-# ssh -t msgr@jpegdev.win "PORT=8000 ./msgr/bin/msgr stop; rm -R msgr; mkdir msgr; cd msgr; tar xzvf ../msgr.tar.gz;./bin/msgr migrate; PORT=8000 ./bin/msgr start; rm ../msgr.tar.gz"
+ssh -t msgr@jpegdev.win "PORT=8000 ./msgr/bin/msgr stop; rm -R msgr; mkdir msgr; cd msgr; tar xzvf ../msgr.tar.gz;./bin/msgr migrate; PORT=8000 ./bin/msgr start; rm ../msgr.tar.gz"

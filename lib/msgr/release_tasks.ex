@@ -7,16 +7,18 @@ defmodule Msgr.ReleaseTasks do
     :ecto
   ]
   
-	def msgr, do: Application.get_application(__MODULE__)
+  @msgrs [
+    :msgr
+  ]
 
-	def repos, do: Application.get_env(msgr(), :ecto_repos, [])
+  @repos [
+    Msgr.Repo
+  ]
 
   def seed do
-		me = msgr()
-		
-		IO.puts "Loading #{me}.."
+    IO.puts "Loading myapp.."
     # Load the code for myapp, but don't start it
-    :ok = Application.load(me)
+    :ok = Application.load(:msgr)
 
     IO.puts "Starting dependencies.."
     # Start apps necessary for executing migrations
@@ -24,45 +26,31 @@ defmodule Msgr.ReleaseTasks do
 
     # Start the Repo(s) for myapp
     IO.puts "Starting repos.."
-    Enum.each(repos(), &(&1.start_link(pool_size: 1)))
+    Enum.each(@repos, &(&1.start_link(pool_size: 1)))
 
     # Run migrations
-    migrate()
+    Enum.each(@msgrs, &run_migrations_for/1)
 
-    # Run seed script
-    Enum.each(repos(), &run_seeds_for/1)
+    # Run the seed script if it exists
+    seed_script = Path.join([priv_dir(:msgr), "repo", "seeds.exs"])
+    if File.exists?(seed_script) do
+      IO.puts "Running seed script.."
+      Code.eval_file(seed_script)
+    end
 
     # Signal shutdown
     IO.puts "Success!"
     :init.stop()
   end
 
-  def migrate, do: Enum.each(repos(), &run_migrations_for/1)
+  def priv_dir(app), do: "#{:code.priv_dir(app)}"
 
-  def priv_dir(msgr), do: "#{:code.priv_dir(msgr)}"
-
-  defp run_migrations_for(repo) do
-    app = Keyword.get(repo.config, :otp_app)
+  defp run_migrations_for(app) do
     IO.puts "Running migrations for #{app}"
-    Ecto.Migrator.run(repo, migrations_path(repo), :up, all: true)
+    Ecto.Migrator.run(Msgr.Repo, migrations_path(app), :up, all: true)
   end
 
-  def run_seeds_for(repo) do
-    # Run the seed script if it exists
-    seed_script = seeds_path(repo)
-    if File.exists?(seed_script) do
-      IO.puts "Running seed script.."
-      Code.eval_file(seed_script)
-    end
-  end
+  defp migrations_path(app), do: Path.join([priv_dir(app), "repo", "migrations"])
+  defp seed_path(app), do: Path.join([priv_dir(app), "repo", "seeds.exs"])
 
-  def migrations_path(repo), do: priv_path_for(repo, "migrations")
-
-  def seeds_path(repo), do: priv_path_for(repo, "seeds.exs")
-
-  def priv_path_for(repo, filename) do
-    app = Keyword.get(repo.config, :otp_app)
-    repo_underscore = repo |> Module.split |> List.last |> Macro.underscore
-    Path.join([priv_dir(app), repo_underscore, filename])
-  end
 end
