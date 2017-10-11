@@ -36,6 +36,13 @@ Any user can like another user's message. However, a user can like a message onl
 
 ---
 
+## Using deploy.sh
+***NOTE:*** *Only users with access to the msgr server will be able to deploy the app.*
+
+If you are such a user, simply run the command `./deploy.sh` in the root folder.
+
+---
+
 To start your Phoenix server:
 
   * Install dependencies with `mix deps.get`
