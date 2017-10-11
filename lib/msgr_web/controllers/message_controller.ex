@@ -4,6 +4,11 @@ defmodule MsgrWeb.MessageController do
   alias Msgr.Messages
   alias Msgr.Messages.Message
 
+	def index(conn, %{"user_id" => user_id}) do
+		messages = Messages.get_user_feed(user_id)
+		render(conn, "index.json", messages: messages)
+	end
+
   def index(conn, _params) do
     if user = get_session(conn, :user_id) do
       messages = Messages.get_user_feed(user)
@@ -19,14 +24,13 @@ defmodule MsgrWeb.MessageController do
   end
 
   def create(conn, %{"message" => message_params}) do
-    case Messages.create_message(message_params) do
-      {:ok, message} ->
+    IO.inspect(message_params)
+    with {:ok, %Message{} = message} <- Messages.create_message(message_params) do
         conn
-        |> put_flash(:info, "Message created successfully.")
-        |> redirect(to: message_path(conn, :index))
-      {:error, %Ecto.Changeset{} = changeset} ->
-        render(conn, "new.html", changeset: changeset)
-    end
+				|> put_status(:created)
+        |> put_resp_header("location", message_path(conn, :show, message))
+				|> render("show.json", message: message)
+  	end
   end
 
   def show(conn, %{"id" => id}) do

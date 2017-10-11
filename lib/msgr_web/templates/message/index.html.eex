@@ -8,50 +8,47 @@
         <div class="user-icon"></div>
       </div>
       <div class="user-info">
-        <p class="full-name"><%= @current_user.full_name %></p>
+      	<p class="full-name"><%= @current_user.full_name %></p>
         <p class="username"><%= @current_user.username %></p>
         <%= link to: user_path(@conn, :show, @current_user),  class: "btn-wrapper" do %><button class="btn btn-msgr my-2 my-sm-0">View Profile</button><% end %>
       </div>
     </div>
   </div>
   <div id="feed" class="container col-md-8 col-sm-12">
-    <% else %>
-    <%= link "Sign Up", to: user_path(@conn, :new), class: "btn btn-lg btn-msgr my-2 my-sm-0" %>
-    <div id="feed" class="container col-12">
-      <% end %>
-      <div class="new-post">
-        <div class="user-icon"></div>
-        <textarea class="form-control" placeholder="Write a message..." aria-label="Write a message..."></textarea>
-        <%= link "Post", to: message_path(@conn, :new), class: "btn btn-msgr my-2 my-sm-0" %>
-      </div>
-      <ul class="post-list">
-				<div id="post-likes" data-path="<%= like_path(@conn, :index) %>">
-        <%= for message <- @messages do %>
-        <% user = Msgr.Users.get_user!(message.user_id) %>
+    <div id="create-post" class="new-post" data-path="<%= message_path(@conn, :create) %>" data-user-id="<%= @current_user.id %>">
+      <div class="user-icon"></div>
+      <textarea class="form-control" placeholder="Write a message..." aria-label="Write a message..."></textarea>
+      <button class="btn btn-msgr my-2 my-sm-0">Post</button>
+    </div>
+    <ul class="post-list">
+			<div id="like-path" data-path="<%= like_path(@conn, :index) %>"></div>
+			<div id="messages-feed" data-path="<%= message_path(@conn, :index) %>" data-user-id="<%= @current_user.id %>">&nbsp;</div>
+			<script id="messages-template" type="text/x-handlebars-template">
+      	{{#each data}}
         <li class="post-list-item">
-          <%= link to: user_path(@conn, :show, user) do %><div class="user-icon" style="background-image: url('/images/profile.jpg');"></div><% end %>
-          <div class="main-info">
+          <div class="user-icon"></div>
+	        <div class="main-info">
             <div class="user-info">
-              <%= link to: user_path(@conn, :show, user) do %>
-              <p class="full-name"><%= user.full_name %></p>
-              <p class="username"><%= user.username %></p>
-              <% end %>
-              <p class="time"><%= Msgr.Messages.get_message_time(message.id) %></p>
+              <p class="full-name">{{user.full_name}}</p>
+              <p class="username">{{user.username}}</p>
+              <p class="time">{{timestamp}}</p>
             </div>
-            <%= link to: message_path(@conn, :show, message) do %><p class="content"><%= message.content %></p><% end %>
+            <p class="content">{{content}}</p>
           </div>
 					<%= if @current_user do %>
           <div class="post-stats">
             <div class="post-stats-like">
-              <div class="like-btn icon <%= if Msgr.Messages.did_user_like(@current_user.id, message.id), do: 'icon--selected' %>"
-									data-user-id="<%= @current_user.id %>" data-message-id="<%= message.id %>"></div>
-              <p class="val"><%= Msgr.Messages.get_like_count(message.id) %></p>
+              <div class="like-btn icon {{#if liked}}icon--selected{{/if}}" data-message-id="{{id}}"></div>
+              <p class="val">{{likes.data.length}}</p>
             </div>
           </div>
 					<% end %>
         </li>
-        <% end %>
-				</div>
-      </ul>
-    </div>
+        {{/each}}
+			</script>
+    </ul>
   </div>
+	<% else %>
+	<%= link "Sign Up", to: user_path(@conn, :new), class: "btn btn-lg btn-msgr my-2 my-sm-0" %>
+	<% end %>
+</div>

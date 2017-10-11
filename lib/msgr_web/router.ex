@@ -22,7 +22,7 @@ defmodule MsgrWeb.Router do
 
     get "/", PageController, :index
     resources "/users", UserController
-    resources "/messages", MessageController
+    resources "/messages", MessageController, except: [:create]
     post "/sessions", SessionController, :login
     delete "/sessions", SessionController, :logout
   end
@@ -31,6 +31,8 @@ defmodule MsgrWeb.Router do
   scope "/api", MsgrWeb do
     pipe_through :api
 
+    resources "/users", UserController, only: [:index]
+    resources "/messages", MessageController, only: [:create, :index]
     resources "/follows", FollowController, except: [:new, :edit]
     delete "/follows", FollowController, :delete
     resources "/likes", LikeController, except: [:new, :edit]

@@ -9,6 +9,7 @@ defmodule Msgr.Messages do
 
   alias Msgr.Messages.Message
   alias Msgr.Users.Follow
+	alias Msgr.Users.User
 
   @doc """
   Returns the list of messages.
@@ -21,6 +22,24 @@ defmodule Msgr.Messages do
   """
   def list_messages do
     Repo.all(from m in Message, order_by: [desc: m.inserted_at])
+  end
+
+  def list_messages_by_userid(user_id) do
+    Repo.all(from m in Message, where: m.user_id == ^user_id, order_by: [desc: m.inserted_at])
+		|> Repo.preload(:user)
+  end
+
+  def get_user_feed(user_id) do
+    query = from f in Follow, where: f.follower_id == ^user_id
+    if length(Repo.all(query)) == 0 do
+      Msgr.Messages.list_messages_by_userid(user_id)
+    else
+			query = from f in Follow, where: f.follower_id == ^user_id or f.subject_id == ^user_id
+      Repo.all(from m in Message, join: f in subquery(query),
+          on: f.subject_id == m.user_id, order_by: [desc: m.inserted_at])
+			|> Enum.uniq()
+			|> Repo.preload(:user)
+    end
   end
 
   @doc """
@@ -38,22 +57,6 @@ defmodule Msgr.Messages do
 
   """
   def get_message!(id), do: Repo.get!(Message, id)
-
-  def list_messages_by_userid(user_id) do
-    Repo.all(from m in Message, where: m.user_id == ^user_id, order_by: [desc: m.inserted_at])
-  end
-
-  def get_user_feed(user_id) do
-    query = from f in Follow, where: f.follower_id == ^user_id
-    if length(Repo.all(query)) == 0 do
-      Msgr.Messages.list_messages_by_userid(user_id)
-    else
-			query = from f in Follow, where: f.follower_id == ^user_id or f.subject_id == ^user_id
-      Repo.all(from m in Message, join: f in subquery(query),
-          on: f.subject_id == m.user_id,
-          order_by: [desc: m.inserted_at])
-    end
-  end
 
   def get_message_time(id) do
     datetime = get_message!(id).inserted_at
@@ -153,6 +156,11 @@ defmodule Msgr.Messages do
 		|> Repo.preload(:user)
 		|> Repo.preload(:message)
 	end
+
+	def list_users_by_like(message_id) do
+		query = from l in Like, where: l.message_id == ^message_id
+		Repo.all(from u in User, join: l in subquery(query), on: l.user_id == u.id)
+	end 
 
   @doc """
   Gets a single like.
