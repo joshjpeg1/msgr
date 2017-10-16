@@ -4,5 +4,5 @@ elixir:
 otp_release:
   - 20.1
 before_script:
-  - psql -U postgres -c "CREATE USER msgr WITH PASSWORD 'travis';"
+  - psql -U postgres -c "CREATE USER msgr WITH PASSWORD 'travisci';"
   - psql -U postgres -c "CREATE DATABASE msgr_test;"
