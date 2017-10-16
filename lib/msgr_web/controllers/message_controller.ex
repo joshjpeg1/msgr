@@ -9,6 +9,11 @@ defmodule MsgrWeb.MessageController do
 		render(conn, "index.json", messages: messages)
 	end
 
+	def index(conn, %{"id" => id}) do
+		message = Messages.get_message!(id)
+		render(conn, "show.json", message: message)
+	end
+
   def index(conn, _params) do
     if user = get_session(conn, :user_id) do
       messages = Messages.get_user_feed(user)

@@ -2,7 +2,7 @@ defmodule MsgrWeb.UserSocket do
   use Phoenix.Socket
 
   ## Channels
-  # channel "room:*", MsgrWeb.RoomChannel
+  channel "updates:*", MsgrWeb.UpdatesChannel
 
   ## Transports
   transport :websocket, Phoenix.Transports.WebSocket

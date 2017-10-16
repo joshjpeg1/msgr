@@ -49,10 +49,10 @@
     <% else %>
     <div id="nav-fix" class="fixed-top">
         <nav class="navbar navbar-light bg-white col-xl-8 ">
-            <a class="navbar-brand" href="#">
+            <%= link to: message_path(@conn, :index), class: "navbar-brand" do %>
                 <img src="<%= static_path(@conn, "/images/logo.png") %>" width="25" height="25" class="d-inline-block align-center" alt="logo">
                 Msgr
-            </a>
+            <% end %>
             <%= form_for @conn, session_path(@conn, :login), [as: "user", class: "form-inline"], fn f -> %>
                 <input type="text" class="form-control" name="username_email" placeholder="Username or email" aria-label="Enter username or email">
                 <input type="submit" class="btn my-2 my-sm-0 btn-msgr" value="Log in">

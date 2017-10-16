@@ -1,4 +1,7 @@
-<link rel="stylesheet" href="css/message-index.css" />
+<link rel="stylesheet" href="/css/message-index.css" />
+<%= if @current_user do %>
+<script>window.user_id = "<%= @current_user.id %>";</script>
+<% end %>
 
 <div class="row">
   <%= if @current_user do %>
@@ -15,14 +18,22 @@
     </div>
   </div>
   <div id="feed" class="container col-md-8 col-sm-12">
-    <div id="create-post" class="new-post" data-path="<%= message_path(@conn, :create) %>" data-user-id="<%= @current_user.id %>">
+		<div id="create-post" class="new-post" data-path="<%= message_path(@conn, :create) %>" data-user-id="<%= @current_user.id %>">
       <div class="user-icon"></div>
       <textarea class="form-control" placeholder="Write a message..." aria-label="Write a message..."></textarea>
       <button class="btn btn-msgr my-2 my-sm-0">Post</button>
     </div>
+	<% else %>
+	<%= link "Sign Up", to: user_path(@conn, :new), class: "btn btn-lg btn-msgr my-2 my-sm-0" %>
+	<div id="feed" class="container col-12">
+	<% end %>
     <ul class="post-list">
 			<div id="like-path" data-path="<%= like_path(@conn, :index) %>"></div>
-			<div id="messages-feed" data-path="<%= message_path(@conn, :index) %>" data-user-id="<%= @current_user.id %>">&nbsp;</div>
+			<%= if @current_user do %>
+			<div id="messages-feed" data-path="<%= message_path(@conn, :index) %>" data-user-id="<%= @current_user.id %>" data-last-update="<%= NaiveDateTime.utc_now() %>">&nbsp;</div>
+			<% else %>
+			<div id="messages-feed" data-path="<%= message_path(@conn, :index) %>" data-last-update="<%= NaiveDateTime.utc_now() %>">&nbsp;</div>
+			<% end %>
 			<script id="messages-template" type="text/x-handlebars-template">
       	{{#each data}}
         <li class="post-list-item">
@@ -48,7 +59,4 @@
 			</script>
     </ul>
   </div>
-	<% else %>
-	<%= link "Sign Up", to: user_path(@conn, :new), class: "btn btn-lg btn-msgr my-2 my-sm-0" %>
-	<% end %>
 </div>

@@ -56,7 +56,10 @@ defmodule Msgr.Messages do
       ** (Ecto.NoResultsError)
 
   """
-  def get_message!(id), do: Repo.get!(Message, id)
+  def get_message!(id) do
+		Repo.get!(Message, id)
+		|> Repo.preload(:user)
+	end
 
   def get_message_time(id) do
     datetime = get_message!(id).inserted_at

@@ -1,4 +1,4 @@
-<link rel="stylesheet" href="css/user-show.css" />
+<link rel="stylesheet" href="/css/user-show.css" />
 
 <div class="head-img"></div>
 <div class="header">
@@ -8,6 +8,7 @@
         <p class="username"><%= @user.username %></p>
         <p class="bio"><%= @user.bio %></p>
     </div>
+		<%= if @current_user do %>
     <%= if @current_user.id == @user.id do %>
 			<button class="btn btn-msgr my-0 disabled">You</button>
 		<% else %>
@@ -15,6 +16,9 @@
 				<button class="btn btn-msgr follow-btn my-0" data-follower-id="<%= @current_user.id %>" data-subject-id="<%= @user.id %>" 
 								data-following="<%= Msgr.Users.get_follow_by_users(@current_user.id, @user.id) != nil %>"></button>
 			</div>
+		<% end %>
+		<% else %>
+			&nbsp;
 		<% end %>
 </div>
 <div class="row">
@@ -37,8 +41,12 @@
     </ul>
     <div id="feed" class="container col-md-9 col-sm-12">
         <ul class="post-list">
-					<div id="post-likes" data-path="<%= like_path(@conn, :create) %>">
-        	<%= for message <- Msgr.Messages.list_messages_by_userid(@user.id) do %>
+					<%= if @current_user do %>
+					<div id="post-likes" data-path="<%= like_path(@conn, :index) %>" data-user="<%= @current_user.id %>">
+        	<% else %>
+					<div id="post-likes" data-path="<%= like_path(@conn, :index) %>">
+					<% end %>
+					<%= for message <- Msgr.Messages.list_messages_by_userid(@user.id) do %>
         	<li class="post-list-item">
           	<div class="user-icon"></div>
           	<div class="main-info">

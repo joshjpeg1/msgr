@@ -18,12 +18,79 @@ import "phoenix_html";
 // Local files can be imported directly using relative
 // paths "./socket" or full ones "web/static/js/socket".
 
-// import socket from "./socket"
+import socket from "./socket"
 
 let handlebars = require("handlebars");
 
-// Thank you to Nathaniel Tuck for supplying the base code: http://www.ccs.neu.edu/home/ntuck/courses/2017/09/cs4550/notes/07-ajax-cart/notes.html
+let channel = (window.user != null) ? null : socket.channel("updates:" + window.user_id, {});
 
+let unread = 0;
+
+function joinChannel() {
+	if (channel != null) {
+		channel.join() 
+			.receive("ok", resp => { console.log("Joined successfully", resp) }) 
+			.receive("error", resp => { console.log("Unable to join", resp) }) 
+	}
+	channel.on("message", receiveMsg);
+}
+
+function receiveMsg(msg) {
+	let dd = $($("#messages-feed")[0]);
+	let get_path = dd.data('path');
+
+	$.ajax({
+		url: get_path,
+		data: {id: msg.id},
+		contentType: "application/json",
+		dataType: "json",
+		method: "GET",
+		success: prependMsg,
+	});
+}
+
+function prependMsg(resp) {
+	let data = resp.data;
+	let liked = false;
+	if (user != null) {
+		let likesArr = data.likes.data;
+		for (var j = 0; j < likesArr.length; j++) {
+			if (likesArr[j].id == user) {
+				liked = true;
+				break;
+			}
+		}
+	}
+	data.liked = liked;
+
+	let dataArr = {data: [data]};
+	
+	let tt = $($("#messages-template")[0]);
+	let code = tt.html();
+	let tmpl = handlebars.compile(code);
+
+	let dd = $($("#messages-feed")[0]);
+	let get_path = dd.data('path');
+	let user = dd.data('user-id');	
+
+	let like_path = $($("#like-path")[0]).data('path');	
+
+	dd.prepend(tmpl(dataArr));
+	if (user != null) {
+		let button = $(".like-btn")[0];
+		add_like_btn_listener(button, like_path, user);
+	}
+}
+
+$(function() {
+	if (!$("#create-post").length > 0) {
+		// Wrong page
+		return;
+	}
+	joinChannel();
+});
+
+// Thank you to Nathaniel Tuck for supplying the base code: http://www.ccs.neu.edu/home/ntuck/courses/2017/09/cs4550/notes/07-ajax-cart/notes.html
 $(function() {
 	if (!$("#user-follows").length > 0) {
 		// Wrong page
@@ -85,12 +152,12 @@ $(function() {
 
 	let bb = $($("#create-post")[0]);
 	let create_path = bb.data('path');
-	
+	let textarea = $(bb.find(".form-control"));	
+
 	let like_path = $($("#like-path")[0]).data('path');
 
 	function post_message() {
-		let content = $(bb.find(".form-control")).val();
-		console.log(content);
+		let content = textarea.val();
 		let u_id = bb.data('user-id');	
 
 		let data = {message: {user_id: u_id, content: content}};
@@ -101,34 +168,45 @@ $(function() {
 			contentType: "application/json",
 			dataType: "json",
 			method: "POST",
-			success: fetch_feed,
+			success: push_channel_message,
 		});
 
-		$(bb.find(".form-control")).val("");
+		textarea.val("");
+		textarea.focus();
+	}
+
+	function push_channel_message(msg) {
+		channel.push("message", {id: msg.data.id})
+		//fetch_feed();
 	}
 
 	function fetch_feed() {
 		function got_feed(data) {
-			console.log(data);
 			let dataArr = data.data;
 			for (var i = 0; i < dataArr.length; i++) {
 				let liked = false;
-				let likesArr = dataArr[i].likes.data;
-				for (var j = 0; j < likesArr.length; j++) {
-					if (likesArr[j].id == user) {
-						liked = true;
-						break;
+				if (user != null) {
+					let likesArr = dataArr[i].likes.data;
+					for (var j = 0; j < likesArr.length; j++) {
+						if (likesArr[j].id == user) {
+							liked = true;
+							break;
+						}
 					}
 				}
 				dataArr[i].liked = liked;
 			}
 			dd.html(tmpl(data));
-			add_like_button_listeners(like_path, user);
+			if (user != null) {
+				$(".like-btn").each(function() {
+					add_like_btn_listener(this, like_path, user);
+				});
+			}
 		}
 
 		$.ajax({
 			url: get_path,
-			data: {user_id: user},
+			data: (user == null ? {} : {user_id: user}),
 			contentType: "application/json",
 			dataType: "json",
 			method: "GET",
@@ -167,32 +245,35 @@ function update_button(button, liked) {
 	if (liked) {
 		$(button)[0].classList.remove('icon--selected');
 	} else {
-	$(button)[0].classList.add('icon--selected');
-	$(button)[0].classList.add('icon--animated');
-	setTimeout(function() {
+		$(button)[0].classList.add('icon--selected');
+		$(button)[0].classList.add('icon--animated');
+		setTimeout(function() {
 			$(button)[0].classList.remove('icon--animated');
 		}, 1300);
 	}
 	$(button)[0].nextElementSibling.innerHTML = parseInt($(button)[0].nextElementSibling.innerHTML) + (liked ? -1 : 1);
 }
 
-function add_like_button_listeners(path, user) {
-	$(".like-btn").each(function() {
-		this.addEventListener("click", function() {
-			toggle_like(path, $(this), user);
-		});
+function add_like_btn_listener(btn, path, user) {
+	btn.addEventListener("click", function() {
+		toggle_like(path, $(btn), user);
 	});
 }
 
-/*
 $(function() {
 	if (!$("#post-likes").length > 0) {
 		// Wrong page.
 		return;
 	}
 
-	let dd= $($("#post-likes")[0]);
-	let path = dd.data('path');
+	let dd = $($("#post-likes")[0]);
+	let like_path = dd.data('path');
+	let user = dd.data('user');
 
+	if (user != null) {
+		$(".like-btn").each(function() {
+			add_like_btn_listener(this, like_path, user);
+		});
+	}
 });
-*/
+
