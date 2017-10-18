@@ -18,7 +18,10 @@ defmodule MsgrWeb.UpdatesChannel do
   # by sending replies to requests from the client
   def handle_in("message", %{"id" => id}, socket) do
 		message = Messages.get_message!(id)
-		followers = Users.get_follower_ids(message.user_id)
+		followers = Users.list_followers(message.user_id)
+		|> Enum.map(fn(f) -> 
+			MsgrWeb.Endpoint.broadcast("updates:" <> Integer.to_string(f.id), "message", %{"id" => id}) 
+			end)
 		broadcast socket, "message", %{"id" => id}
 		{:noreply, socket}
   end

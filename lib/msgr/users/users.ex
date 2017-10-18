@@ -129,8 +129,7 @@ defmodule Msgr.Users do
   end
 
 	def get_follower_ids(user_id) do
-    query = from f in Follow, where: f.subject_id == ^user_id
-    Repo.all(from u in User, join: f in subquery(query), on: f.follower_id == u.id, select: u.id)
+    Repo.all(from f in Follow, where: f.subject_id == ^user_id, select: f.follower_id)
 	end
 
   def list_followers(user_id) do
