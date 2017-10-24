@@ -19,6 +19,7 @@
     </div>
     <p class="content">{{content}}</p>
     <p class="time">{{timestamp}}</p>
+		<%= if @current_user do %>
     <div class="msg-view-divider"></div>
     <div class="post-stats">
       <div class="post-stats-like">
@@ -26,6 +27,7 @@
         <p class="val">{{likes.data.length}}</p>
       </div>
     </div>
+		<% end %>
   </script>
 </div>
 
@@ -50,7 +52,7 @@
       <button class="btn btn-msgr my-2 my-sm-0">Post</button>
     </div>
 	<% else %>
-	<%= link "Sign Up", to: user_path(@conn, :new), class: "btn btn-lg btn-msgr my-2 my-sm-0" %>
+	<%= link "Sign Up", to: user_path(@conn, :new), class: "btn btn-lg btn-msgr my-2 my-sm-0", id: "signUp" %>
 	<div id="feed" class="container col-12">
 	<% end %>
     <ul class="post-list">

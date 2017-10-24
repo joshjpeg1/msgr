@@ -112,7 +112,7 @@ function fetch_feed() {
 	let user = dd.data('user-id');
 
 	let like_path = $($("#like-path")[0]).data('path');
-		
+
 	function got_feed(data) {
 		let dataArr = data.data;
 		for (var i = 0; i < dataArr.length; i++) {
@@ -143,13 +143,22 @@ function fetch_feed() {
 
 	$.ajax({
 		url: get_path,
-		data: (user == null ? {} : {user_id: user}),
+		data: {user_id: (user == undefined ? -1 : user)},
 		contentType: "application/json",
 		dataType: "json",
 		method: "GET",
 		success: got_feed,
 	});
 }
+
+$(function() {
+	if (!$("#signUp").length > 0) {
+		// Wrong page
+		return;
+	}
+
+	fetch_feed();
+});
 
 $(function() {
 	if (!$("#create-post").length > 0) {

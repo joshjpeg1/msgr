@@ -5,7 +5,11 @@ defmodule MsgrWeb.MessageController do
   alias Msgr.Messages.Message
 
 	def index(conn, %{"user_id" => user_id}) do
-		messages = Messages.get_user_feed(user_id)
+		if user_id == "-1" do
+			messages = Messages.list_messages
+		else
+			messages = Messages.get_user_feed(user_id)
+		end
 		render(conn, "index.json", messages: messages)
 	end
 

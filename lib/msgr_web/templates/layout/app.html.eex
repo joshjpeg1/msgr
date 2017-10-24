@@ -66,6 +66,7 @@
 	    <p class="alert alert-danger" role="alert"><%= get_flash(@conn, :error) %></p>
 	<% end %>
 
+		<%= if @current_user do %>
 		<div class="modal fade" id="postModal" tabindex="-1" role="dialog" aria-labelledby="newPost" aria-hidden="true">
     	<div id="postBox" class="modal-dialog" role="document">
      		<div class="new-post" data-path="<%= message_path(@conn, :create) %>" data-user-id="<%= @current_user.id %>">
@@ -75,6 +76,7 @@
      		</div>
     	</div>
 		</div>
+		<% end %>
 
 		<main role="main">
       <%= render @view_module, @view_template, assigns %>

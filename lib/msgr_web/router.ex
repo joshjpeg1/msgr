@@ -20,7 +20,7 @@ defmodule MsgrWeb.Router do
   scope "/", MsgrWeb do
     pipe_through :browser # Use the default browser stack
 
-    get "/", PageController, :index
+    get "/", MessageController, :index
     resources "/users", UserController
     resources "/messages", MessageController, except: [:create, :show, :new]
     post "/sessions", SessionController, :login

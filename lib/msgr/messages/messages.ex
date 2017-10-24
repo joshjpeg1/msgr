@@ -23,6 +23,7 @@ defmodule Msgr.Messages do
   """
   def list_messages do
     Repo.all(from m in Message, order_by: [desc: m.inserted_at])
+    |> Repo.preload(:user)
   end
 
   def list_messages_by_userid(user_id) do

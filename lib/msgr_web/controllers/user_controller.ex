@@ -9,6 +9,11 @@ defmodule MsgrWeb.UserController do
     render(conn, "index.html", users: users, query: query)
   end
 
+  def index(conn, _params) do
+    users = Users.list_users()
+    render(conn, "index.html", users: users, query: "")
+  end
+
   def new(conn, _params) do
     changeset = Users.change_user(%User{})
     render(conn, "new.html", changeset: changeset)
