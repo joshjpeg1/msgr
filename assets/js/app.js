@@ -85,14 +85,24 @@ $(function() {
 	add_follows();
 });
 
-$(function() {
-	if (!$("#create-post").length > 0) {
-		// Wrong page
-		return;
-	}
+function post_message(create_path, content, u_id) {
+	let data = {message: {user_id: u_id, content: content}};
 
-	joinChannel();
+	$.ajax({
+		url: create_path,
+		data: JSON.stringify(data),
+		contentType: "application/json",
+		dataType: "json",
+		method: "POST",
+		success: push_channel_message,
+	});
+}
 
+function push_channel_message(resp) {
+	channel.push("message", {id: resp.data.id});
+}
+
+function fetch_feed() {
 	let tt = $($("#messages-template")[0]);
 	let code = tt.html();
 	let tmpl = handlebars.compile(code);
@@ -101,79 +111,76 @@ $(function() {
 	let get_path = dd.data('path');
 	let user = dd.data('user-id');
 
+	let like_path = $($("#like-path")[0]).data('path');
+		
+	function got_feed(data) {
+		let dataArr = data.data;
+		for (var i = 0; i < dataArr.length; i++) {
+			let liked = false;
+			if (user != null) {
+				let likesArr = dataArr[i].likes.data;
+				for (var j = 0; j < likesArr.length; j++) {
+					if (likesArr[j].id == user) {
+						liked = true;
+						break;
+					}
+				}
+			}
+			dataArr[i].liked = liked;
+		}
+		dd.html(tmpl(data));
+		if (user != null) {
+			$(".like-btn").each(function() {
+				add_like_btn_listener(this, like_path, user);
+			});
+		}
+		$(".content").each(function() {
+			this.addEventListener("click", function() {
+				message_modal_update($(this).data('message-id'));
+			});
+		});
+	}
+
+	$.ajax({
+		url: get_path,
+		data: (user == null ? {} : {user_id: user}),
+		contentType: "application/json",
+		dataType: "json",
+		method: "GET",
+		success: got_feed,
+	});
+}
+
+$(function() {
+	if (!$("#create-post").length > 0) {
+		// Wrong page
+		return;
+	}
+	joinChannel();
+
 	let bb = $($("#create-post")[0]);
 	let create_path = bb.data('path');
 	let textarea = $(bb.find(".form-control"));
 
-	let like_path = $($("#like-path")[0]).data('path');
-
-	function post_message() {
-		let content = textarea.val();
-		let u_id = bb.data('user-id');
-
-		let data = {message: {user_id: u_id, content: content}};
-
-		$.ajax({
-			url: create_path,
-			data: JSON.stringify(data),
-			contentType: "application/json",
-			dataType: "json",
-			method: "POST",
-			success: push_channel_message,
-		});
-
+	$(bb.find(".btn-msgr"))[0].addEventListener("click", function() {
+		post_message(create_path, textarea.val(), bb.data('user-id'));
 		textarea.val("");
 		textarea.focus();
-	}
-
-	function push_channel_message(msg) {
-		channel.push("message", {id: msg.data.id});
-	}
-
-	function fetch_feed() {
-		function got_feed(data) {
-			let dataArr = data.data;
-			for (var i = 0; i < dataArr.length; i++) {
-				let liked = false;
-				if (user != null) {
-					let likesArr = dataArr[i].likes.data;
-					for (var j = 0; j < likesArr.length; j++) {
-						if (likesArr[j].id == user) {
-							liked = true;
-							break;
-						}
-					}
-				}
-				dataArr[i].liked = liked;
-			}
-			dd.html(tmpl(data));
-			if (user != null) {
-				$(".like-btn").each(function() {
-					add_like_btn_listener(this, like_path, user);
-				});
-			}
-			$(".content").each(function() {
-				this.addEventListener("click", function() {
-					message_modal_update($(this).data('message-id'));
-				});
-			});
-		}
-
-		$.ajax({
-			url: get_path,
-			data: (user == null ? {} : {user_id: user}),
-			contentType: "application/json",
-			dataType: "json",
-			method: "GET",
-			success: got_feed,
-		});
-	}
-
-	$(bb.find(".btn-msgr"))[0].addEventListener("click", function() {
-		post_message();
 	});
 
 	fetch_feed();
+});
+
+$(function() {
+	let postBox = $($("#postBox")[0]);
+	let newPost = $(postBox.find(".new-post"));
+	let create_path = newPost.data('path');
+	let textarea = $(newPost.find(".form-control"));
+
+	$(newPost.find(".btn-msgr"))[0].addEventListener("click", function() {
+		post_message(create_path, textarea.val(), newPost.data('user-id'));
+		textarea.val("");
+	});
 });
 
 $(function() {

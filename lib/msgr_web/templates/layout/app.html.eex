@@ -39,7 +39,7 @@
                           <%= link "Log out", to: session_path(@conn, :logout), method: :delete, class: "dropdown-item" %>
                     	</div>
                 	</div>
-                	 <%= link "Post", to: message_path(@conn, :new), id: "post", class: "btn my-2 my-sm-0" %>
+                	<button id="post" class="btn my-2 my-sm-0" data-toggle="modal" data-target="#postModal">Post</button>
             	</div>
         	</nav>
     	</div>
@@ -66,9 +66,19 @@
 	    <p class="alert alert-danger" role="alert"><%= get_flash(@conn, :error) %></p>
 	<% end %>
 
-      <main role="main">
-        <%= render @view_module, @view_template, assigns %>
-      </main>
+		<div class="modal fade" id="postModal" tabindex="-1" role="dialog" aria-labelledby="newPost" aria-hidden="true">
+    	<div id="postBox" class="modal-dialog" role="document">
+     		<div class="new-post" data-path="<%= message_path(@conn, :create) %>" data-user-id="<%= @current_user.id %>">
+       		<div class="user-icon"></div>
+       		<textarea class="form-control" placeholder="Write a message..." aria-label="Write a message..."></textarea>
+       		<button class="btn btn-msgr my-2 my-sm-0" type="submit" data-dismiss="modal">Post</button>
+     		</div>
+    	</div>
+		</div>
+
+		<main role="main">
+      <%= render @view_module, @view_template, assigns %>
+    </main>
 
     </div> <!-- /container -->
     <script src="<%= static_path(@conn, "/js/app.js") %>"></script>
