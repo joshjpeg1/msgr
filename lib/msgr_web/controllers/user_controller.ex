@@ -4,9 +4,9 @@ defmodule MsgrWeb.UserController do
   alias Msgr.Users
   alias Msgr.Users.User
 
-  def index(conn, _params) do
-    users = Users.list_users()
-    render(conn, "index.html", users: users)
+  def index(conn, %{"query" => query}) do
+    users = Users.search_for_users(query)
+    render(conn, "index.html", users: users, query: query)
   end
 
   def new(conn, _params) do

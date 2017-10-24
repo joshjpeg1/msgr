@@ -21,6 +21,10 @@ defmodule Msgr.Users do
     Repo.all(User)
   end
 
+	def search_for_users(query) do
+		Repo.all(from u in User)
+	end
+
   @doc """
   Gets a single user.
 

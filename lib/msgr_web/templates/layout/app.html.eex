@@ -25,8 +25,8 @@
                 	</li>
             	</ul>
             	<div id="nav-right" class="form-inline">
-                	<form id="search" class="form-inline my-2 my-lg-0">
-                    	<input type="text" class="form-control" name="search" placeholder="Search Msgr" aria-label="Search Msgr">
+                	<form id="search" action="<%= user_path(@conn, :index) %>" method="GET" class="form-inline my-2 my-lg-0">
+                    	<input type="text" class="form-control" name="query" placeholder="Search users" aria-label="Search Msgr">
                     	<button id="search-icon" type="submit"><img src="<%= static_path(@conn, "/images/search.png") %>" width="20" height="20" class="d-inline-block align-center" alt="search"></button>
                 	</form>
                 	<div class="dropdown">

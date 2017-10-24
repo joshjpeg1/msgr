@@ -1,0 +1,146 @@
+#main h1 {
+  font-weight: 600;
+  color: #888;
+  margin-bottom: 2rem;
+}
+
+#main h1 div {
+  display: inline-block;
+  color: #333;
+}
+
+#main h1 div::before, #main h1 div::after {
+  content: "\"";
+}
+
+.btn-msgr {
+  background: #FF4646;
+  color: #fff;
+  font-weight: 500;
+  border-radius: 5px;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  margin-right: 1rem;
+  cursor: pointer;
+}
+
+.user-list {
+  list-style: none;
+  padding: 0;
+  width: 100%;
+}
+
+.user-list .user-list-item {
+  display: inline-block;
+  margin-bottom: 1rem;
+  width: 33%;
+  margin-right: -5px;
+  padding-left: 0.5rem;
+  padding-right: 0.5rem;
+  border-radius: 5px;
+  position: relative;
+}
+
+.user-list .user-list-item:nth-child(3n) {
+  padding-right: 0;
+}
+
+.user-list .user-list-item:nth-child(3n + 1) {
+  padding-left: 0;
+}
+
+.user-list .user-list-item .user-background {
+  background: #F8CBC1;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+  height: 7rem;
+  position: relative;
+}
+
+.user-list .user-list-item .user-background .user-icon {
+  position: absolute;
+  top: 4.25rem;
+  left: 50%;
+  transform: translateX(-50%);
+  height: 5.5rem;
+  width: 5.5rem;
+  border-radius: 5px;
+  background-image: url("/images/profile.jpg");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  margin: 0 auto;
+  box-shadow: 0 0 0 5px #fff;
+}
+
+.user-list .user-list-item .user-info {
+  background: #fff;
+  padding-top: 3.5rem;
+  padding-bottom: 1.25rem;
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
+}
+
+.user-list .user-list-item .user-info p {
+  margin: 0;
+  text-align: center;
+  display: block;
+}
+
+.user-list .user-list-item .user-info .full-name {
+  font-size: 2rem;
+  font-weight: 600;
+  line-height: 2rem;
+  color: #000;
+}
+
+.user-list .user-list-item .user-info .username {
+  color: #888;
+  margin-bottom: 1rem;
+}
+
+.user-list .user-list-item .user-info .username::before {
+  content: '@';
+}
+
+.user-list .user-list-item .user-info .btn-wrapper {
+  text-decoration: none;
+}
+
+.user-list .user-list-item .user-info .btn-msgr {
+  display: block;
+  margin: 0 auto;
+}
+
+@media (max-width: 992px) {
+  .user-list .user-list-item {
+    width: 50%;
+  }
+  .user-list .user-list-item:nth-child(3n) {
+    padding-right: 0.5rem;
+  }
+  .user-list .user-list-item:nth-child(3n + 1) {
+    padding-left: 0.5rem;
+  }
+  .user-list .user-list-item:nth-child(2n) {
+    padding-right: 0;
+  }
+  .user-list .user-list-item:nth-child(2n + 1) {
+    padding-left: 0;
+  }
+}
+
+@media (max-width: 576px) {
+  .user-list .user-list-item {
+    width: 100%;
+  }
+  .user-list .user-list-item:nth-child(2n) {
+    padding-left: 0rem;
+    padding-right: 0rem;
+  }
+  .user-list .user-list-item:nth-child(2n + 1) {
+    padding-left: 0rem;
+    padding-right: 0rem;
+  }
+}
+
