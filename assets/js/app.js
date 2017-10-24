@@ -18,19 +18,18 @@ import "phoenix_html";
 // Local files can be imported directly using relative
 // paths "./socket" or full ones "web/static/js/socket".
 
-import socket from "./socket"
+import add_follows from "./follow";
+import add_like_btn_listener from "./like";
+import socket from "./socket";
 
 let handlebars = require("handlebars");
-
 let channel = (window.user != null) ? null : socket.channel("updates:" + window.user_id, {});
-
-let unread = 0;
 
 function joinChannel() {
 	if (channel != null) {
-		channel.join() 
-			.receive("ok", resp => { console.log("Joined successfully", resp) }) 
-			.receive("error", resp => { console.log("Unable to join", resp) }) 
+		channel.join()
+			.receive("ok", resp => { console.log("Joined successfully", resp) })
+			.receive("error", resp => { console.log("Unable to join", resp) })
 	}
 	channel.on("message", receiveMsg);
 }
@@ -64,16 +63,16 @@ function prependMsg(resp) {
 	data.liked = liked;
 
 	let dataArr = {data: [data]};
-	
+
 	let tt = $($("#messages-template")[0]);
 	let code = tt.html();
 	let tmpl = handlebars.compile(code);
 
 	let dd = $($("#messages-feed")[0]);
 	let get_path = dd.data('path');
-	let user = dd.data('user-id');	
+	let user = dd.data('user-id');
 
-	let like_path = $($("#like-path")[0]).data('path');	
+	let like_path = $($("#like-path")[0]).data('path');
 
 	dd.prepend(tmpl(dataArr));
 	if (user != null) {
@@ -83,82 +82,34 @@ function prependMsg(resp) {
 }
 
 $(function() {
+	add_follows();
+});
+
+$(function() {
 	if (!$("#create-post").length > 0) {
 		// Wrong page
 		return;
 	}
+
 	joinChannel();
-});
-
-// Thank you to Nathaniel Tuck for supplying the base code: http://www.ccs.neu.edu/home/ntuck/courses/2017/09/cs4550/notes/07-ajax-cart/notes.html
-$(function() {
-	if (!$("#user-follows").length > 0) {
-		// Wrong page
-		return;
-	}
-
-	const textFollow = "Follow";
-	const textFollowing = "Following";
-	
-	let dd = $($("#user-follows")[0]);
-	let path = dd.data('path');
-
-	function toggle_follow(button) {
-		let f_id = button.data('follower-id');
-		let s_id = button.data('subject-id');
-		let following = button.data('following');
-
-		let data = {follow: {follower_id: f_id, subject_id: s_id}};
-
-		let method = following ? "DELETE" : "POST";
-		
-		$.ajax({
-			url: path,
-			data: JSON.stringify(data),
-			contentType: "application/json",
-			dataType: "json",
-			method: method,
-			success: update_button(button, following),
-		});
-	}
-
-	function update_button(button, following) {
-		$(button)[0].innerHTML = following ? textFollow : textFollowing;
-		button.data('following', !following);
-	}
-	
-	$(".follow-btn").each(function() {
-		this.innerHTML = $(this).data('following') ? textFollowing : textFollow;
-		this.addEventListener("click", function() {
-			toggle_follow($(this));
-		});
-	});
-
-});
-
-$(function() {
-	if (!$("#create-post").length > 0) {
-		// Wrong page
-		return;
-	}
 
 	let tt = $($("#messages-template")[0]);
 	let code = tt.html();
 	let tmpl = handlebars.compile(code);
-	
+
 	let dd = $($("#messages-feed")[0]);
 	let get_path = dd.data('path');
-	let user = dd.data('user-id');	
+	let user = dd.data('user-id');
 
 	let bb = $($("#create-post")[0]);
 	let create_path = bb.data('path');
-	let textarea = $(bb.find(".form-control"));	
+	let textarea = $(bb.find(".form-control"));
 
 	let like_path = $($("#like-path")[0]).data('path');
 
 	function post_message() {
 		let content = textarea.val();
-		let u_id = bb.data('user-id');	
+		let u_id = bb.data('user-id');
 
 		let data = {message: {user_id: u_id, content: content}};
 
@@ -176,8 +127,7 @@ $(function() {
 	}
 
 	function push_channel_message(msg) {
-		channel.push("message", {id: msg.data.id})
-		//fetch_feed();
+		channel.push("message", {id: msg.data.id});
 	}
 
 	function fetch_feed() {
@@ -202,6 +152,11 @@ $(function() {
 					add_like_btn_listener(this, like_path, user);
 				});
 			}
+			$(".content").each(function() {
+				this.addEventListener("click", function() {
+					message_modal_update($(this).data('message-id'));
+				});
+			});
 		}
 
 		$.ajax({
@@ -221,45 +176,6 @@ $(function() {
 	fetch_feed();
 });
 
-function toggle_like(path, button, u_id) {
-	let m_id = button.data('message-id');
-	//let u_id = button.data('user-id');
-
-	let data = {like: {user_id: u_id, message_id: m_id}};
-
-	$(button)[0].classList.remove('icon--animated');
-	let liked = $(button)[0].classList.contains('icon--selected');
-	let method = liked ? "DELETE" : "POST";
-		
-	$.ajax({
-		url: path,
-		data: JSON.stringify(data),
-		contentType: "application/json",
-		dataType: "json",
-		method: method,
-		success: update_button(button, liked),
-	});
-}
-
-function update_button(button, liked) {
-	if (liked) {
-		$(button)[0].classList.remove('icon--selected');
-	} else {
-		$(button)[0].classList.add('icon--selected');
-		$(button)[0].classList.add('icon--animated');
-		setTimeout(function() {
-			$(button)[0].classList.remove('icon--animated');
-		}, 1300);
-	}
-	$(button)[0].nextElementSibling.innerHTML = parseInt($(button)[0].nextElementSibling.innerHTML) + (liked ? -1 : 1);
-}
-
-function add_like_btn_listener(btn, path, user) {
-	btn.addEventListener("click", function() {
-		toggle_like(path, $(btn), user);
-	});
-}
-
 $(function() {
 	if (!$("#post-likes").length > 0) {
 		// Wrong page.
@@ -275,5 +191,64 @@ $(function() {
 			add_like_btn_listener(this, like_path, user);
 		});
 	}
+	$(".content").each(function() {
+			this.addEventListener("click", function() {
+				message_modal_update($(this).data('message-id'));
+			});
+	});
 });
 
+function message_modal_update(m_id) {
+	let dd = null;
+	let get_path = null;
+	let user = null;
+	if (!$("#messages-feed").length > 0) {
+		if (!$("#post-likes").length > 0) {
+			return;
+		}
+		dd = $($("#post-likes")[0]);
+		get_path = dd.data('message-path');
+		user = dd.data('user');
+	} else {
+		dd = $($("#messages-feed")[0]);
+		get_path = dd.data('path');
+		user = dd.data('user-id');
+	}
+
+	$.ajax({
+		url: get_path,
+		data: {id: m_id},
+		contentType: "application/json",
+		dataType: "json",
+		method: "GET",
+		success: fill_modal,
+	});
+
+	function fill_modal(resp) {
+		let data = resp.data;
+		let liked = false;
+		//let user = $($('#messages-feed')[0]).data('user-id');
+		if (user != null) {
+			let likesArr = data.likes.data;
+			for (var j = 0; j < likesArr.length; j++) {
+				if (likesArr[j].id == user) {
+					liked = true;
+					break;
+				}
+			}
+		}
+		data.liked = liked;
+
+		let tt = $($("#msg-modal-template")[0]);
+		let code = tt.html();
+		let tmpl = handlebars.compile(code);
+
+		let view = $($("#msg-view")[0]);
+		let like_path = $($('#like-path')[0]).data('path');
+
+		view.html(tmpl(data));
+		view.find(".like-btn").each(function() {
+			add_like_btn_listener(this, like_path, user);
+		});
+	}
+}

@@ -10,6 +10,7 @@ defmodule Msgr.Messages do
   alias Msgr.Messages.Message
   alias Msgr.Users.Follow
 	alias Msgr.Users.User
+	alias Msgr.Users
 
   @doc """
   Returns the list of messages.
@@ -41,6 +42,26 @@ defmodule Msgr.Messages do
 			|> Repo.preload(:user)
     end
   end
+
+	def find_mentions(content) do
+		if String.contains?(content, "@") do
+			mentions = String.split(content, " ")
+			|> Enum.reduce([], fn(x, acc) -> 
+				if String.starts_with?(x, "@") do
+					user = Users.get_user_by_username(Regex.replace(~r/([^a-zA-Z0-9_])/, x, ""))
+					if user do
+						acc ++ ["<%= user_path(@conn, :show, " <> Integer.to_string(user.id) <> ") %>"]
+					else
+						acc
+					end
+				else
+					acc
+				end
+			end)
+		else
+			content
+		end
+	end
 
   @doc """
   Gets a single message.

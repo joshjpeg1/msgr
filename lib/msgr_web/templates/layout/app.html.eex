@@ -21,10 +21,7 @@
             	<% end %>
             	<ul class="navbar-nav mr-auto">
                 	<li class="nav-item active">
-                    	<a class="nav-link" href="#">Home</a>
-                	</li>
-                	<li class="nav-item">
-                    	<a class="nav-link" href="#">Notifications</a>
+                    	<%= link to: message_path(@conn, :index),  class: "nav-link" do %>Home<% end %>
                 	</li>
             	</ul>
             	<div id="nav-right" class="form-inline">

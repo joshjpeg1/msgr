@@ -33,14 +33,9 @@ defmodule MsgrWeb.MessageController do
     with {:ok, %Message{} = message} <- Messages.create_message(message_params) do
         conn
 				|> put_status(:created)
-        |> put_resp_header("location", message_path(conn, :show, message))
+        |> put_resp_header("location", message_path(conn, :index))
 				|> render("show.json", message: message)
   	end
-  end
-
-  def show(conn, %{"id" => id}) do
-    message = Messages.get_message!(id)
-    render(conn, "show.html", message: message)
   end
 
   def edit(conn, %{"id" => id}) do

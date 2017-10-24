@@ -15,10 +15,9 @@ defmodule MsgrWeb.MessageView do
   def render("message.json", %{message: message}) do
     data = %{
       id: message.id,
-      content: message.content,
+      content: message.content, # Messages.find_mentions(message.content),
       user_id: message.user_id,
 			timestamp: Messages.get_message_time(message.id),
-			# likes: MsgrWeb.UserView.render(Messages.list_users_by_like(message.id))
     }
 		
 		data = Map.put(data, :likes, MsgrWeb.UserView.render("index.json", %{users: Messages.list_users_by_like(message.id)}))

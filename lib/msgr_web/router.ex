@@ -22,7 +22,7 @@ defmodule MsgrWeb.Router do
 
     get "/", PageController, :index
     resources "/users", UserController
-    resources "/messages", MessageController, except: [:create]
+    resources "/messages", MessageController, except: [:create, :show]
     post "/sessions", SessionController, :login
     delete "/sessions", SessionController, :logout
   end
