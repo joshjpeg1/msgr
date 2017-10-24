@@ -15,7 +15,7 @@ defmodule MsgrWeb.MessageView do
   def render("message.json", %{message: message}) do
     data = %{
       id: message.id,
-      content: message.content, # Messages.find_mentions(message.content),
+      content: Messages.find_mentions(message.content),
       user_id: message.user_id,
 			timestamp: Messages.get_message_time(message.id),
     }
